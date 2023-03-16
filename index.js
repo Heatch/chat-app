@@ -5,6 +5,9 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
