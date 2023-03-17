@@ -1,13 +1,24 @@
 var nameForm = document.getElementById('usernameForm');
 var nameInput = document.getElementById('username');
+var socket = io();
 
 // get the stored username value from localStorage, if it exists
 var storedUsername = localStorage.getItem('username');
 
 // if a username value was found, update the input field and the username variable
+
+function usernameObtained() {
+  socket.emit('user connected', username);
+  data = {name: username, userId: socket.id};
+  socket.emit('setSocketId', data);
+}
+
 if (storedUsername) {
   nameInput.value = storedUsername;
   username = storedUsername;
+  socket.on('connect', function() {
+    usernameObtained();
+  });
 } else {
   document.getElementById('usernameBox').style.display = 'flex';
   var bodyChildren = document.querySelectorAll('body > *:not(#usernameBox)');
@@ -15,7 +26,6 @@ if (storedUsername) {
     child.style.filter = 'blur(5px)';
   });
 }
-
 
 // store the username value in localStorage on form submit
 nameForm.addEventListener('submit', function(e) {
@@ -35,11 +45,9 @@ nameForm.addEventListener('submit', function(e) {
   
   // hide the username box
   document.getElementById('usernameBox').style.display = 'none';
+  usernameObtained();
 
 });
-
-
-var socket = io();
       
 var messages = document.getElementById('messages');
 var form = document.getElementById('form');
@@ -60,14 +68,17 @@ socket.on('chat message', function(msg) {
   window.scrollTo(0, document.body.scrollHeight);
 });  
 
-// socket.on('connect', function() {
-//   socket.emit('user connected', username);
-// });
+socket.on('user connected', function(user) {
+  var connectionItem = document.createElement('li');
+  connectionItem.innerHTML = `<strong>${user}</strong> has connected!`;
+  messages.appendChild(connectionItem);
+  window.scrollTo(0, document.body.scrollHeight);
+});
 
-// socket.on('user connected', function(user) {
-//   var connectionItem = document.createElement('li');
-//   connectionItem.innerHTML = `<strong>${user}</strong> has connected!`;
-//   messages.appendChild(connectionItem);
-//   window.scrollTo(0, document.body.scrollHeight);
-// });
-
+// Handle user disconnected event
+socket.on('user disconnected', function(user) {
+  var disconnectItem = document.createElement('li');
+  disconnectItem.innerHTML = `<strong>${user}</strong> has disconnected!`;
+  messages.appendChild(disconnectItem);
+  window.scrollTo(0, document.body.scrollHeight);
+});
