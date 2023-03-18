@@ -1,3 +1,8 @@
+// THINGS I NEED TO ADD:
+// 1. Database to store messages
+// 2. Thing to show whose typing
+
+
 var nameForm = document.getElementById('usernameForm');
 var nameInput = document.getElementById('username');
 var socket = io();
@@ -57,6 +62,10 @@ form.addEventListener('submit', function(e) {
   e.preventDefault();
   if (input.value) {
     socket.emit('chat message',`<strong>${username}: </strong>${input.value}`);
+    var item = document.createElement('li');
+    item.innerHTML = `<strong>${username}: </strong>${input.value}`;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
 });

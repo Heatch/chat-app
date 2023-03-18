@@ -15,29 +15,33 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
-      });
-
-    socket.on('user connected', (user) => {
-      console.log(`${user} has connected!`);
-      io.emit('user connected', user);
-      username = user;
-    });
-
-    socket.on('setSocketId', (data) => {
-      var userName = data.name;
-      var userId = data.userId;
-      userNames[userId] = userName;
-    });
-
-    socket.on('disconnect', () => {
-      console.log(`${userNames[socket.id]} has disconnected!`);
-      io.emit('user disconnected', userNames[socket.id]);
-    });
-
+  socket.on('chat message', (msg) => {
+    socket.broadcast.emit('chat message', msg);
   });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+  socket.on('user connected', (user) => {
+    console.log(`${user} has connected!`);
+    socket.broadcast.emit('user connected', user);
+    username = user;
+  });
+
+  socket.on('setSocketId', (data) => {
+    var userName = data.name;
+    var userId = data.userId;
+    userNames[userId] = userName;
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`${userNames[socket.id]} has disconnected!`);
+    if (userNames[socket.id]) {
+      io.emit('user disconnected', userNames[socket.id]);
+    }
+  });
+
+});
+
+const port = process.env.PORT || 3000;
+
+server.listen(port, () => {
+  console.log(`listening on *:${port}`);
 });
