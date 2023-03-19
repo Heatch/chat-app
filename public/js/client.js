@@ -57,6 +57,7 @@ nameForm.addEventListener('submit', function(e) {
 var messages = document.getElementById('messages');
 var form = document.getElementById('form');
 var input = document.getElementById('input');
+var body = document.querySelector('body');
 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
@@ -90,4 +91,36 @@ socket.on('user disconnected', function(user) {
   disconnectItem.innerHTML = `<strong>${user}</strong> has disconnected!`;
   messages.appendChild(disconnectItem);
   window.scrollTo(0, document.body.scrollHeight);
+});
+
+let typingTimer;
+let typing = false
+const doneTypingInterval = 2000; // 2 second interval
+
+$('#input').on('keyup', function() {
+  // Clear the typing timer
+  clearTimeout(typingTimer);
+
+  // Start a new typing timer
+  typingTimer = setTimeout(function() {
+    typing = false;
+    socket.emit('stopped typing');
+  }, doneTypingInterval);
+
+  // Emit the "typing" event
+  if (!typing) {
+    socket.emit('typing', username);
+    typing = true;
+  }
+});
+
+socket.on('typing', function(user) {
+  var typingItem = document.createElement('span');
+  typingItem.innerHTML = `${user} is typing...`;
+  body.appendChild(typingItem);
+});
+
+socket.on('stopped typing', function() {
+  var typingItem = document.querySelector('span');
+  body.removeChild(typingItem);
 });

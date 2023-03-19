@@ -20,7 +20,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('user connected', (user) => {
-    console.log(`${user} has connected!`);
     socket.broadcast.emit('user connected', user);
     username = user;
   });
@@ -32,10 +31,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`${userNames[socket.id]} has disconnected!`);
     if (userNames[socket.id]) {
       io.emit('user disconnected', userNames[socket.id]);
     }
+  });
+
+  socket.on('typing', (user) => {
+    socket.broadcast.emit('typing', user);
+  });
+
+  socket.on('stopped typing', () => {
+    socket.broadcast.emit('stopped typing');
   });
 
 });
