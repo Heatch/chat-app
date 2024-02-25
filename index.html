@@ -19,5 +19,28 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/client.js"></script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyAP8KVUwJ0LPytCWwESIuPtNOuTcwRtSQM",
+        authDomain: "heatchchat.firebaseapp.com",
+        projectId: "heatchchat",
+        storageBucket: "heatchchat.appspot.com",
+        messagingSenderId: "828798124829",
+        appId: "1:828798124829:web:e9e90db5bc80ec5c38d7f4",
+        measurementId: "G-1FT0VNXQWR"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
   </body>
 </html>
